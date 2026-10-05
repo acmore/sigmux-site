@@ -69,18 +69,21 @@
 <main>
   <div class="brand">Sigmux</div>
   <h1>Privacy Policy</h1>
-  <div class="date">Effective June 12, 2026</div>
+  <div class="date">Effective October 5, 2026</div>
 
   <div class="summary">
     Sigmux is an SSH terminal for iOS. It is built so that your data stays on
     your device: no accounts, no analytics, no tracking, and no servers of ours
-    in between you and your machines.
+    in between you and your machines. The one exception is optional push
+    notifications, which pass through a relay we run that cannot read them.
   </div>
 
   <h2>Data we collect</h2>
-  <p>None. Sigmux does not collect, transmit, store, or sell any personal data.
-  The app contains no analytics, advertising, or tracking SDKs, and has no
-  user accounts.</p>
+  <p>Sigmux has no analytics, advertising, or tracking SDKs, and no user
+  accounts. If you turn on <strong>Sigmux notifications</strong> (Settings →
+  Agents), the app registers your phone with our push relay; what the relay
+  keeps is listed under <a href="#push">Push notifications</a> below. Nothing
+  else is collected, transmitted, stored, or sold.</p>
 
   <h2>Data stored on your device</h2>
   <ul>
@@ -92,13 +95,55 @@
     device.</li>
     <li><strong>Terminal content</strong> — scrollback and session output are
     held in memory only and are not persisted to disk.</li>
+    <li><strong>Compose drafts</strong> — an unsent note per host is saved on
+    your device so it survives a restart. It is excluded from backups.</li>
+    <li><strong>Diagnostics</strong> — crash and hang reports from iOS
+    (MetricKit), and connection traces you turn on in Settings, are written
+    to the app's Documents folder on your device. They are never uploaded
+    unless you share the files yourself.</li>
   </ul>
 
   <h2>Network connections</h2>
   <p>Sigmux connects directly from your device to the SSH servers you
-  configure. We operate no intermediary or relay servers. Your terminal
-  traffic flows only between your device and your server, encrypted end to end
-  by the SSH protocol.</p>
+  configure. Your terminal traffic flows only between your device and your
+  server, encrypted end to end by the SSH protocol; no server of ours is in
+  between. The only connection to us is the push relay described next, and
+  only when you turn notifications on.</p>
+
+  <h2 id="push">Push notifications</h2>
+  <p>Hosts can notify your phone when a coding agent finishes or waits for
+  your approval. With <strong>Sigmux notifications</strong>, each host
+  encrypts every notification with keys that exist only on that host and on
+  your phone, and sends the sealed message to our relay
+  (<code>push.acmore.dev</code>, a Cloudflare Worker with a database in the
+  Asia-Pacific region). The relay signs it for Apple Push Notification
+  service and forwards it; Sigmux decrypts it on your phone.</p>
+  <ul>
+    <li><strong>What the relay stores</strong> — your phone's Apple push
+    token and whether it is a beta or App Store install; for each host you
+    set up, a random key identifier and the SHA-256 hash of that host's send
+    token; and per-host counters used for rate limiting. Secrets are stored
+    only as hashes.</li>
+    <li><strong>What the relay never sees</strong> — the notification's
+    text, the host's name or address, your session or window names, the
+    agent's words, or the commands it asks about. It cannot decrypt what it
+    forwards.</li>
+    <li><strong>What Apple sees</strong> — Apple delivers the still-sealed
+    message to your phone and does not have the keys to read it.</li>
+    <li><strong>Answering from a notification</strong> — when you tap Allow
+    or Deny on a notification, Sigmux connects from your phone to that host
+    over SSH, exactly as it would in the app, and sends your answer. Nothing
+    about your answer goes through the relay.</li>
+    <li><strong>Stopping</strong> — removing Sigmux notifications from a
+    host (Settings → Agents) deletes that host's keys on the relay and on
+    your phone. Deleting the app invalidates your push token, and the relay
+    discards it the next time a host tries to send. You can also ask us to
+    delete your registration at the address below.</li>
+  </ul>
+  <p>If you choose Bark, ntfy, or a webhook instead, hosts send
+  notifications straight to that service under its own privacy policy; our
+  relay is not involved. The relay's source code is published with the app's
+  repository.</p>
 
   <h2>Face ID and Touch ID</h2>
   <p>Biometric authentication is handled entirely on-device by iOS. Sigmux
