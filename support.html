@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support — Sigmux</title>
+<style>
+  :root {
+    --bg: #0F0F12;
+    --surface: #1A1A1F;
+    --border: #2A2A31;
+    --text: #ECECF1;
+    --muted: #8E8E96;
+    --accent: #FFD23F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .brand {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h1 { font-size: 28px; line-height: 1.15; margin: 12px 0 4px; }
+  .date {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  h2 {
+    font-size: 17px;
+    margin: 36px 0 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  p, li { color: var(--text); font-size: 15px; }
+  li { margin: 6px 0; }
+  .summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">Sigmux</div>
+  <h1>Support</h1>
+  <div class="date">Updated October 5, 2026</div>
+
+  <div class="summary">
+    Sigmux is an SSH terminal for iPhone, made for people who live in tmux
+    and run coding agents on their own machines. Questions, bugs and
+    requests: <a href="mailto:hezj07@gmail.com">hezj07@gmail.com</a>.
+    Replies usually within two days.
+  </div>
+
+  <h2>Reporting a problem</h2>
+  <p>Include the build number (Settings → About), your iPhone model and iOS
+  version, the host's OS and tmux version (<code>tmux -V</code>), and which
+  connection mode you use (shell, tmux, or control mode). For connection or
+  display problems, turn on <em>Settings → Diagnostics → Connection trace</em>,
+  reproduce the problem, then share the trace files from the Sigmux folder in
+  the Files app. Traces contain host names and terminal output; look through
+  them before sending.</p>
+
+  <h2>Getting started</h2>
+  <ul>
+    <li><strong>Add a host</strong> — hostname or IP, port, username, and a
+    password or an SSH key. Keys can be imported, or generated on the phone
+    and installed on the host from the app.</li>
+    <li><strong>Connect to</strong> — <em>Shell</em> opens a plain login
+    shell. <em>tmux</em> attaches to a session on the host like a desktop
+    terminal would. <em>Control mode</em> uses tmux's <code>-CC</code>
+    protocol so windows and panes become native controls; it needs tmux 3.3
+    or newer on the host.</li>
+    <li><strong>Agents</strong> — Settings → Agents installs small hooks on a
+    host so Claude Code, Codex and OpenCode can notify your phone and take
+    answers from it. The host needs <code>python3</code>; Sigmux's own push
+    notifications also need OpenSSL 1.1.1 or newer (any current macOS or
+    Linux has both).</li>
+  </ul>
+
+  <h2>Notifications</h2>
+  <p>Notifications from your hosts travel sealed through a relay we run and
+  are opened on your phone; the relay cannot read them. If a host's test
+  notification fails, the error names the cause: the host can't reach
+  <code>push.acmore.dev</code>, the install is out of date, or notifications
+  are off for Sigmux in iOS Settings. Bark, ntfy and webhooks remain
+  available as alternatives.</p>
+
+  <h2>Privacy</h2>
+  <p>What stays on your phone and what the relay stores:
+  <a href="privacy.html">Privacy Policy</a>.</p>
+
+  <footer>
+    <a href="index.html">← Sigmux</a>
+  </footer>
+</main>
+</body>
+</html>
