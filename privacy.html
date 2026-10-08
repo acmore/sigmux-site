@@ -69,18 +69,23 @@
 <main>
   <div class="brand">Sigmux</div>
   <h1>Privacy Policy</h1>
-  <div class="date">Effective June 12, 2026</div>
+  <div class="date">Effective October 8, 2026 (relay section added; first version June 12, 2026)</div>
 
   <div class="summary">
     Sigmux is an SSH terminal for iOS. It is built so that your data stays on
     your device: no accounts, no analytics, no tracking, and no servers of ours
-    in between you and your machines.
+    between you and your machines. The one exception is an optional relay
+    that forwards encrypted agent notifications to Apple; what it keeps is
+    listed below.
   </div>
 
   <h2>Data we collect</h2>
-  <p>None. Sigmux does not collect, transmit, store, or sell any personal data.
-  The app contains no analytics, advertising, or tracking SDKs, and has no
-  user accounts.</p>
+  <p>Sigmux has no user accounts and contains no analytics, advertising, or
+  tracking SDKs. The only data that reaches a server of ours is what the
+  optional notification relay needs to deliver push notifications to your
+  phone: a random device identifier, a hashed secret and your Apple push
+  token, as described under <a href="#relay">Notifications and the Sigmux
+  relay</a>. Nothing is sold or shared, and nothing is used for tracking.</p>
 
   <h2>Data stored on your device</h2>
   <ul>
@@ -96,9 +101,78 @@
 
   <h2>Network connections</h2>
   <p>Sigmux connects directly from your device to the SSH servers you
-  configure. We operate no intermediary or relay servers. Your terminal
-  traffic flows only between your device and your server, encrypted end to end
-  by the SSH protocol.</p>
+  configure. Your terminal traffic flows only between your device and your
+  server, encrypted end to end by the SSH protocol; no server of ours is in
+  that path. The one service we operate is the optional notification relay
+  described next.</p>
+
+  <h2 id="relay">Notifications and the Sigmux relay</h2>
+  <p>Sigmux can show you a notification when a coding agent on your server
+  finishes or waits for an approval. Your server cannot talk to Apple's push
+  service by itself, so Sigmux runs a small relay (<code>push.acmore.dev</code>,
+  a Cloudflare Worker with a Cloudflare D1 database) that forwards those
+  notifications to Apple. You opt in: nothing is sent to the relay until you
+  turn on notifications in Settings → Agents and install the hook on a server
+  from your phone. If you choose Bark, ntfy or a webhook instead, the relay
+  is not involved at all.</p>
+
+  <p><strong>What the relay receives.</strong> Each notification arrives at
+  the relay as an envelope encrypted on your server with a key that only your
+  phone and that server hold. The relay cannot read the title, the text, the
+  host name or the project; it forwards the envelope to Apple, and the Sigmux
+  notification extension on your phone opens it. The fallback text Apple
+  shows if the envelope cannot be opened is a fixed sentence ("Open Sigmux to
+  read this notification.").</p>
+
+  <p><strong>What the relay stores.</strong></p>
+  <ul>
+    <li>For your phone: a random device identifier, the SHA-256 hash of the
+    secret that proves the phone owns that identifier, the Apple push token
+    for Sigmux on your phone (and whether it is a sandbox or production
+    token), whether delivery is enabled, and the times the row was created
+    and last updated.</li>
+    <li>For each server you installed the hook on, and for the phone's own
+    "send a test notification" route: a random key identifier, the SHA-256
+    hash of the token the server uses to send, the creation time, and two
+    rate-limit counters (notifications in the current minute and day).</li>
+  </ul>
+  <p>The relay never stores a notification, a server name or address, a
+  username, a project path, or anything you typed. It has no user accounts
+  and no analytics. Secrets are stored only as hashes; the keys that open the
+  envelopes exist only on your phone and your servers. Rate limits are per
+  server (30 notifications a minute, 2,000 a day) so one runaway script
+  cannot flood your phone.</p>
+
+  <p><strong>Where.</strong> The Worker and the database run on Cloudflare's
+  network. Logs on Cloudflare are the Worker's own error output only; the
+  relay does not log request contents.</p>
+
+  <p><strong>How long.</strong> Rows stay until you remove them. A push token
+  Apple reports as no longer valid is cleared from the row at once; the row
+  itself stays so your servers keep working after Sigmux refreshes the
+  token.</p>
+
+  <p><strong>Trial and purchase.</strong> When a trial ends without a
+  purchase, Sigmux asks the relay to pause delivery for your phone. The rows
+  stay so that a later purchase restores notifications without reinstalling
+  anything on your servers; notifications sent meanwhile are refused, not
+  queued. Buying or restoring Sigmux resumes delivery the next time the app
+  runs.</p>
+
+  <p><strong>How to stop it.</strong> Uninstalling the hook from a server in
+  Sigmux, or deleting that host, removes the server's route from the relay,
+  so nothing from that server reaches the relay any more; this is always
+  available, with or without a purchase. Your phone's own row (the random
+  identifier, the hashed secret and the push token) stays so that a server
+  you set up later works without a new registration. To have it deleted,
+  write to the contact address on this page from the mail account you use
+  with the App Store, and say roughly when you installed Sigmux; we delete
+  the matching rows and confirm.</p>
+
+  <p><strong>Other push services.</strong> If you choose Bark, ntfy or a
+  webhook instead of the Sigmux relay, notifications go from your server to
+  that service directly. Their handling of your data is governed by their
+  own policies; Sigmux never sees them.</p>
 
   <h2>Face ID and Touch ID</h2>
   <p>Biometric authentication is handled entirely on-device by iOS. Sigmux
@@ -121,6 +195,7 @@
 
   <footer>
     <a href="index.html">← Sigmux</a>
+    <a href="help.html" style="margin-left:16px">Help</a>
   </footer>
 </main>
 </body>
