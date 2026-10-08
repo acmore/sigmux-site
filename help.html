@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help — Sigmux</title>
+<style>
+  :root {
+    --bg: #0F0F12;
+    --surface: #1A1A1F;
+    --border: #2A2A31;
+    --text: #ECECF1;
+    --muted: #8E8E96;
+    --accent: #FFD23F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .brand {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  h1 { font-size: 28px; line-height: 1.15; margin: 12px 0 4px; }
+  .date {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  h2 {
+    font-size: 17px;
+    margin: 36px 0 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  h3 { font-size: 15px; margin: 20px 0 4px; }
+  p, li { color: var(--text); font-size: 15px; }
+  li { margin: 6px 0; }
+  code, pre {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+  }
+  code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 5px;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    margin: 10px 0 14px;
+  }
+  pre code { background: none; border: 0; padding: 0; }
+  .summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 24px 0;
+    font-size: 15px;
+  }
+  .toc {
+    margin: 0;
+    padding-left: 20px;
+    column-count: 2;
+    column-gap: 24px;
+  }
+  .toc li { margin: 3px 0; break-inside: avoid; }
+  @media (max-width: 480px) { .toc { column-count: 1; } }
+  dt { font-weight: 600; margin-top: 12px; }
+  dd { margin: 2px 0 0 0; color: var(--text); font-size: 15px; }
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  footer a + a { margin-left: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">Sigmux</div>
+  <h1>Help</h1>
+  <div class="date">For Sigmux 1.0 · updated October 8, 2026</div>
+
+  <div class="summary">
+    Sigmux is an SSH terminal for iPhone and iPad built around tmux. It
+    connects to servers you already have; there is no Sigmux account and no
+    server of ours in the path except an optional relay for notifications.
+    This page covers setup, the tmux and keyboard behaviour that is not
+    obvious from the screen, and what to do when something is off.
+  </div>
+
+  <ol class="toc">
+    <li><a href="#requirements">Requirements</a></li>
+    <li><a href="#first-connection">First connection</a></li>
+    <li><a href="#tailscale">Tailscale and private networks</a></li>
+    <li><a href="#tmux">tmux</a></li>
+    <li><a href="#keyboard">Keyboard and input</a></li>
+    <li><a href="#agents">Agents and notifications</a></li>
+    <li><a href="#trial">Trial and purchase</a></li>
+    <li><a href="#troubleshooting">Troubleshooting</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+
+  <h2 id="requirements">Requirements</h2>
+  <ul>
+    <li><strong>iOS 16 or later</strong>, on iPhone or iPad.</li>
+    <li><strong>A server you can reach over SSH</strong> with a password or a
+    key. Sigmux speaks SSH directly to it; nothing needs to be installed on
+    the server for the terminal itself.</li>
+    <li><strong>tmux 3.2 or newer</strong> on the server for control mode,
+    the mode that turns windows and panes into native controls. tmux 3.3+
+    lets each window keep its own size. Older tmux works through classic
+    attach, and a plain shell works on any host.</li>
+    <li>For agent notifications: Claude Code, Codex or OpenCode installed on
+    the server, and either the Sigmux relay or a push service of your own
+    (Bark, ntfy or a webhook). See <a href="#agents">Agents and notifications</a>.</li>
+  </ul>
+
+  <h2 id="first-connection">First connection</h2>
+  <ol>
+    <li>Tap <strong>+</strong> on the Hosts screen. Enter a name, the host
+    name or address, the port and the username.</li>
+    <li>Choose how to sign in. <strong>Password</strong> is stored in the iOS
+    Keychain. For a key, <strong>Generate new key</strong> makes an ed25519
+    key on the phone (you copy its public half to the server's
+    <code>authorized_keys</code>), or <strong>Import new</strong> brings in
+    a key you already have. Keys never leave the device.</li>
+    <li>Under <strong>Connect to</strong>, pick <strong>tmux</strong> or a
+    plain shell. For tmux, pick <strong>Control mode</strong> (tmux 3.2+) or
+    <strong>Classic attach</strong>, and a session name; Sigmux attaches to
+    it and creates it if it does not exist. The first time, with more than
+    one session on the host, you choose one.</li>
+    <li>Tap the host. On the first connection Sigmux shows the server's host
+    key fingerprint and asks you to accept it; it is remembered and checked
+    on every later connection.</li>
+  </ol>
+  <p>Sigmux locks itself with Face ID or Touch ID (App Lock in Settings).
+  Everything you save, hosts, credentials and settings, stays on the phone.</p>
+
+  <h2 id="tailscale">Tailscale and private networks</h2>
+  <p>Many Sigmux users reach their servers over Tailscale (or another
+  WireGuard mesh). Sigmux does not care: it is an SSH client, and a tailnet
+  address is just an address. What does matter is whether the phone's path
+  to the server is <strong>direct</strong> or goes through a
+  <strong>relay</strong>, because a relayed path from a phone on cellular
+  commonly has a round trip of 300 to 700 ms. Everything still works, but
+  connecting takes seconds, every keystroke echoes late, and the tmux
+  handshake can hit its timeout.</p>
+  <h3>Set the host up once</h3>
+  <ul>
+    <li>Use the <strong>MagicDNS name</strong> (<code>mac.tailnet-name.ts.net</code>
+    or just <code>mac</code>) or the stable <code>100.x.y.z</code> address as
+    the host name. Both survive IP changes, so the remembered host key keeps
+    matching.</li>
+    <li>Keep the ordinary SSH server (OpenSSH) listening and sign in with a
+    key, as on any host. <strong>Tailscale SSH</strong> with "check mode"
+    asks you to confirm in a browser before each login; Sigmux has no browser
+    to do that in, so either exempt the phone from check mode in your ACL or
+    keep OpenSSH.</li>
+    <li>Leave the server awake. A Mac that sleeps does not answer; in System
+    Settings turn off sleep while on power, or run <code>caffeinate -s</code>
+    in a tmux window you keep around.</li>
+  </ul>
+  <h3>Get a direct path</h3>
+  <p>A phone on cellular sits behind carrier NAT, so the connection can only
+  be direct if the <em>server's</em> side can be reached. Check with
+  <code>tailscale status</code> on the server: a line that says
+  <code>relay "hkg"</code> (or any relay name) next to the phone means every
+  byte goes through that relay; <code>direct</code> with an address means
+  you are done. Then, in order of effect:</p>
+  <ol>
+    <li><strong>IPv6 at home or on the VPS.</strong> Carriers hand phones
+    IPv6; if the server has a public IPv6 address too, Tailscale connects
+    directly without any NAT tricks. This is the single most effective
+    change.</li>
+    <li><strong>Let the router map a port.</strong> Enable UPnP or NAT-PMP on
+    the home router, or forward one UDP port to the server and pin Tailscale
+    to it: <code>tailscale up --port=41641</code> (keep your other flags) and
+    forward UDP 41641. On a cloud VM, open UDP 41641 inbound in the security
+    group.</li>
+    <li><strong>Avoid double NAT.</strong> A 5G home gateway or an ISP modem
+    in front of your own router usually means two NATs and no hole punching.
+    Put the modem in bridge mode, or use the ISP's IPv6.</li>
+    <li><strong>A relay of your own nearby.</strong> If the server must stay
+    behind a hard NAT, a small VPS in the same region as the phone running a
+    custom DERP (or acting as a Tailscale peer relay) cuts the round trip to
+    tens of milliseconds, still relayed but close.</li>
+  </ol>
+  <p><code>tailscale netcheck</code> on the server reports the NAT type and
+  whether a port mapping was found; "MappingVariesByDestIP: true" with no
+  mapping is the case that only IPv6 or a forwarded port fixes.</p>
+  <h3>Living with a relayed link</h3>
+  <ul>
+    <li>Keep sessions attached rather than closing them: reconnecting into
+    the same tmux session is one tap from the Disconnected band and costs one
+    handshake, and nothing is lost on the server meanwhile.</li>
+    <li>Use <strong>Compose</strong> for anything longer than a command;
+    typing character by character over a 500 ms echo is miserable, one paste
+    is not.</li>
+    <li>Raise the host's <strong>Keepalive</strong> interval a little if the
+    cellular link drops the SSH connection often; the default is tuned for
+    direct paths.</li>
+    <li>Agent notifications do not use the tailnet at all: the hook on the
+    server posts to the relay (or your Bark, ntfy or webhook) over the public
+    internet, so the server needs outbound HTTPS and the phone needs nothing
+    but its own connectivity.</li>
+  </ul>
+
+  <h2 id="tmux">tmux</h2>
+  <h3>Control mode</h3>
+  <p>In control mode Sigmux attaches as a tmux control client. Windows and
+  panes are listed in the <strong>palette</strong>: tap the window name in
+  the title bar, or the tmux key on the key row. From there you switch,
+  split, rename and close, and create new windows. Output in a window you
+  are not looking at marks that window in the palette; a bell or an agent
+  notification marks it too.</p>
+  <p>Switching windows does not replay what happened in the window since you
+  last saw it. Sigmux asks tmux for the window's screen and the last 1,000
+  lines of its history and draws those, so the switch is immediate and the
+  scrollback is what tmux has. Your own tmux prefix keys still work.</p>
+  <h3>Classic attach and plain shells</h3>
+  <p>Classic attach runs the ordinary <code>tmux attach</code> in a terminal,
+  for servers with an older tmux. A plain shell is just a shell. In both,
+  Sigmux can still show the tmux palette and key row: set <strong>tmux
+  controls</strong> on the host to Auto (shown while a tmux is detected), On
+  or Off, and set the <strong>Prefix</strong> (Ctrl-b or Ctrl-a) so the
+  palette can drive tmux through keystrokes. If you start tmux with a custom
+  socket, enter the path that <code>tmux display-message -p
+  '#{socket_path}'</code> prints.</p>
+  <h3>Server-side settings worth having</h3>
+  <ul>
+    <li>On tmux 3.7, add this to <code>~/.tmux.conf</code> and reconnect,
+    so full-screen programs redraw without flicker (tmux 3.8 detects it by
+    itself):
+      <pre><code>set -as terminal-features ',xterm-256color:sync'</code></pre></li>
+    <li>If your prompt shows up twice in the scrollback after a resize, add:
+      <pre><code>set -g scroll-on-clear off</code></pre></li>
+  </ul>
+  <h3>Busy windows and slow links</h3>
+  <p>When a window produces output faster than the link can carry it, tmux
+  pauses that window for Sigmux instead of letting everything queue behind
+  it. The window you are looking at is resumed at once and redrawn from a
+  fresh capture; a window you are not looking at stays paused until you
+  open it. Hosts whose session is not on screen are paused the same way, so
+  keeping three servers attached costs about what one does.</p>
+
+  <h2 id="keyboard">Keyboard and input</h2>
+  <ul>
+    <li><strong>Showing and hiding the keyboard.</strong> Tap the terminal to
+    bring it up; drag down on the terminal to put it away. Scrolling never
+    raises it. Keys on the key row that type something (Tab, the symbols) do
+    raise it; Esc and the arrows do not.</li>
+    <li><strong>The key row.</strong> Esc, Tab, Ctrl, Alt, Shift, arrows,
+    paging and the symbols a shell needs, with Shift+Tab for the tools that
+    use it. Tap Ctrl, Alt or Shift to arm it for the next key; hold it for
+    half a second to lock it until you tap it again.</li>
+    <li><strong>Compose.</strong> The pencil key opens a real text field for
+    longer input, with cursor movement and dictation. Send pastes it into the
+    terminal as one paste (bracketed when the program asks for it). Drafts
+    survive leaving the session.</li>
+    <li><strong>Files and images.</strong> From Compose, attach a screenshot,
+    a photo or a file from Files; it is uploaded to the host and its path
+    pasted. Sharing text, an image or a file to Sigmux from another app
+    lands in an inbox you can send to a host later.</li>
+    <li><strong>Hardware keyboards</strong> send Ctrl, Esc, arrows and
+    function keys directly; arrows and deletes repeat while held.</li>
+    <li><strong>Reading.</strong> Tap a URL to open it; tap a file path in
+    agent output to read the file. Long-press to select a word, a path or a
+    quoted string with the system handles and menu. The search key finds text
+    in the scrollback.</li>
+    <li><strong>Chinese and other IMEs</strong> work in the terminal and in
+    Compose; composition shows above the cursor and is sent when confirmed.</li>
+  </ul>
+
+  <h2 id="agents">Agents and notifications</h2>
+  <p>A coding agent on your server (Claude Code, Codex or OpenCode) can
+  notify the phone when it finishes or waits for an approval, and you can
+  answer <strong>Allow</strong> or <strong>Deny</strong> from the
+  notification. The answer travels over your own SSH connection to your own
+  server; nothing runs anywhere else.</p>
+  <ol>
+    <li>In <strong>Settings → Agents</strong>, turn notifications on and
+    choose a service: <strong>Sigmux</strong> (the relay we run; it forwards
+    an envelope encrypted on your server and cannot read it), or your own
+    <strong>Bark</strong>, <strong>ntfy</strong> or <strong>Webhook</strong>
+    endpoint.</li>
+    <li>Under <strong>On your hosts</strong>, install on each host. Sigmux
+    signs in with that host's credential and writes the agent hooks; nothing
+    runs in the background on the host, the agents call the hook when they
+    need you. <strong>Remove from host</strong> undoes it, with or without a
+    purchase.</li>
+    <li><strong>Send a test notification</strong> checks the path end to
+    end. "Break through Focus" marks a waiting approval as time-sensitive;
+    "Include the message" puts the agent's words in the notification.</li>
+  </ol>
+  <p>Inside a session, a waiting approval shows as a card above the key row
+  with the same Allow and Deny, and the conversation can be read as native
+  text instead of terminal scroll. A file the agent mentions opens in a
+  reader; the git changes it made open as a diff.</p>
+
+  <h2 id="trial">Trial and purchase</h2>
+  <ul>
+    <li>Sigmux is free to try for <strong>14 days</strong>. The trial starts
+    only when you tap <strong>Start 14-day trial</strong> (a zero-price App
+    Store transaction), not when you install the app or add a host. It never
+    charges and never renews.</li>
+    <li>After the trial, a <strong>one-time purchase</strong> unlocks Sigmux
+    for good, with Family Sharing. No subscription. The price is shown in
+    the app in your local currency.</li>
+    <li>When a trial ends without a purchase: opening a new connection and
+    answering an agent approval from a notification need the purchase. A
+    session that is already open keeps working until you close it. Your
+    hosts, keys, settings and drafts stay, and you can still remove hooks
+    from your servers.</li>
+    <li><strong>Restore Purchases</strong> (Settings → Sigmux) brings back a
+    purchase or the original trial on a new phone; restoring an expired trial
+    does not restart it.</li>
+  </ul>
+
+  <h2 id="troubleshooting">Troubleshooting</h2>
+  <dl>
+    <dt>Connecting takes several seconds, or output lags</dt>
+    <dd>On a mesh VPN (Tailscale and the like) a phone on cellular often
+    reaches the server through a relay rather than directly, with a round
+    trip of half a second or more. Everything still works; it is the network.
+    See <a href="#tailscale">Tailscale and private networks</a> for how to
+    tell and what fixes it.</dd>
+
+    <dt>"tmux handshake timed out"</dt>
+    <dd>Sigmux attached but tmux did not answer in control mode within a few
+    seconds. Usual causes: a tmux older than 3.2 on a host set to Control
+    mode (switch the host to Classic attach), or a shell startup script that
+    prompts for input (an updater, a license notice) before tmux can run.
+    Sigmux waits for the shell to go quiet, but a script that keeps asking
+    wins.</dd>
+
+    <dt>The keyboard will not appear, or appears over a sheet</dt>
+    <dd>Tap the terminal itself; scrolling and the key row's action keys
+    are designed not to raise it. If it stays up over a sheet, close the
+    sheet and drag down on the terminal.</dd>
+
+    <dt>Duplicated prompt lines in the scrollback</dt>
+    <dd>Some shells repaint the prompt on every resize and tmux pushes the
+    old copy into history. <code>set -g scroll-on-clear off</code> in
+    <code>~/.tmux.conf</code> stops it.</dd>
+
+    <dt>A window shows an old screen after switching</dt>
+    <dd>Switching captures the window from tmux; if it looks stale, switch
+    away and back to capture again. If it keeps happening, record a trace
+    (below) and write to us.</dd>
+
+    <dt>Notifications stopped</dt>
+    <dd>Check Settings → Agents still shows the host as installed and send a
+    test notification. If the trial ended, notifications pause until the
+    purchase; removing hooks still works.</dd>
+
+    <dt>Recording a trace for a bug report</dt>
+    <dd>Settings → About → <strong>Runtime trace</strong> (session and tmux
+    internals) or <strong>Terminal trace</strong> (rendering and keyboard
+    sizing) write log files to the app's Documents folder, visible in the
+    Files app under Sigmux. Reproduce the problem, turn the trace off, and
+    send the file with a description of what you did. The files record
+    control sequences, sizes and timings; with the byte payload option off
+    they do not include what you typed.</dd>
+  </dl>
+
+  <h2 id="contact">Contact</h2>
+  <p>Questions, bugs and feature requests:
+  <a href="mailto:hezj07@gmail.com">hezj07@gmail.com</a>. How your data is
+  handled is in the <a href="privacy.html">Privacy Policy</a>.</p>
+
+  <footer>
+    <a href="index.html">← Sigmux</a>
+    <a href="privacy.html">Privacy Policy</a>
+  </footer>
+</main>
+</body>
+</html>
