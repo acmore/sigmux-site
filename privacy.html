@@ -69,7 +69,7 @@
 <main>
   <div class="brand">Sigmux</div>
   <h1>Privacy Policy</h1>
-  <div class="date">Effective October 8, 2026 (relay section added; first version June 12, 2026)</div>
+  <div class="date">Effective October 18, 2026 (relay registration now verified with Apple App Attest; relay section added October 8, 2026; first version June 12, 2026)</div>
 
   <div class="summary">
     Sigmux is an SSH terminal for iOS. It is built so that your data stays on
@@ -83,9 +83,10 @@
   <p>Sigmux has no user accounts and contains no analytics, advertising, or
   tracking SDKs. The only data that reaches a server of ours is what the
   optional notification relay needs to deliver push notifications to your
-  phone: a random device identifier, a hashed secret and your Apple push
-  token, as described under <a href="#relay">Notifications and the Sigmux
-  relay</a>. Nothing is sold or shared, and nothing is used for tracking.</p>
+  phone: a device identifier derived from an Apple App Attest key, a hashed
+  secret and your Apple push token, as described under
+  <a href="#relay">Notifications and the Sigmux relay</a>. Nothing is sold
+  or shared, and nothing is used for tracking.</p>
 
   <h2>Data stored on your device</h2>
   <ul>
@@ -124,24 +125,40 @@
   shows if the envelope cannot be opened is a fixed sentence ("Open Sigmux to
   read this notification.").</p>
 
+  <p><strong>How your phone registers.</strong> Before the relay accepts a
+  phone, the phone proves to the relay that it is a genuine copy of Sigmux
+  on a genuine Apple device, using Apple's App Attest service: Sigmux
+  creates an App Attest key on the phone, asks the relay for a short-lived
+  challenge, has Apple's hardware sign that challenge, and sends the
+  resulting attestation to the relay. The relay checks it against Apple's
+  certificates and the app's identity and then discards it; it keeps no
+  attestation, no certificate and no challenge. The phone's identifier on
+  the relay is derived from the App Attest key's identifier, so the same
+  key always maps to the same row and a registration cannot be replayed
+  for another phone.</p>
   <p><strong>What the relay stores.</strong></p>
   <ul>
-    <li>For your phone: a random device identifier, the SHA-256 hash of the
-    secret that proves the phone owns that identifier, the Apple push token
-    for Sigmux on your phone (and whether it is a sandbox or production
-    token), whether delivery is enabled, and the times the row was created
-    and last updated.</li>
+    <li>For your phone: that device identifier, the SHA-256 hash of the
+    secret that proves the phone owns it, the Apple push token for Sigmux on
+    your phone (and whether it is a sandbox or production token), whether
+    delivery is enabled, the times the row was created and last updated, and
+    two rate-limit counters (notifications in the current minute and day).</li>
     <li>For each server you installed the hook on, and for the phone's own
     "send a test notification" route: a random key identifier, the SHA-256
-    hash of the token the server uses to send, the creation time, and two
-    rate-limit counters (notifications in the current minute and day).</li>
+    hash of the token the server uses to send, and the creation time. A
+    phone can have up to 32 such routes.</li>
+    <li>For the relay as a whole: one row with the day's totals of writes and
+    registrations, with nothing in it that identifies a phone or a server.</li>
   </ul>
   <p>The relay never stores a notification, a server name or address, a
   username, a project path, or anything you typed. It has no user accounts
   and no analytics. Secrets are stored only as hashes; the keys that open the
   envelopes exist only on your phone and your servers. Rate limits are per
-  server (30 notifications a minute, 2,000 a day) so one runaway script
-  cannot flood your phone.</p>
+  phone (30 notifications a minute, 2,000 a day, across all of that phone's
+  servers) so one runaway script cannot flood your phone. The relay also
+  keeps a daily safety budget for itself; when it is used up, new
+  registrations and notifications are refused until the next day rather
+  than queued.</p>
 
   <p><strong>Where.</strong> The Worker and the database run on Cloudflare's
   network. Logs on Cloudflare are the Worker's own error output only; the
