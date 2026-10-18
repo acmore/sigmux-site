@@ -179,12 +179,15 @@
   <p><strong>How to stop it.</strong> Uninstalling the hook from a server in
   Sigmux, or deleting that host, removes the server's route from the relay,
   so nothing from that server reaches the relay any more; this is always
-  available, with or without a purchase. Your phone's own row (the random
-  identifier, the hashed secret and the push token) stays so that a server
-  you set up later works without a new registration. To have it deleted,
-  write to the contact address on this page from the mail account you use
-  with the App Store, and say roughly when you installed Sigmux; we delete
-  the matching rows and confirm.</p>
+  available, with or without a purchase. To delete everything the relay
+  holds about your phone (the identifier, the hashed secret, the push token
+  and every route), open Settings → Agents in Sigmux and choose
+  <strong>Forget this phone on the relay</strong>; the relay deletes the rows
+  at once, and the servers you set up keep their hooks but are refused until
+  you set them up again. If you no longer have the phone, write to the
+  contact address on this page from the mail account you use with the App
+  Store, and say roughly when you installed Sigmux; we delete the matching
+  rows and confirm.</p>
 
   <p><strong>Other push services.</strong> If you choose Bark, ntfy or a
   webhook instead of the Sigmux relay, notifications go from your server to
