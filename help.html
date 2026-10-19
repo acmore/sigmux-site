@@ -100,7 +100,7 @@
 <main>
   <div class="brand">Sigmux</div>
   <h1>Help</h1>
-  <div class="date">For Sigmux 1.0 · updated October 8, 2026</div>
+  <div class="date">For Sigmux 1.0 · updated October 19, 2026</div>
 
   <div class="summary">
     Sigmux is an SSH terminal for iPhone and iPad built around tmux. It
@@ -369,6 +369,23 @@
     <dd>Switching captures the window from tmux; if it looks stale, switch
     away and back to capture again. If it keeps happening, record a trace
     (below) and write to us.</dd>
+
+    <dt id="codex-colors">Codex colors do not match Sigmux's theme</dt>
+    <dd>Codex chooses some background colors when it starts. In a tmux session
+    shared with another terminal, those colors can be hard to read in Sigmux,
+    especially in the light theme. Exit Codex, then start a new process on
+    the host with:
+      <pre><code>FORCE_COLOR=1 codex</code></pre>
+    To resume a saved conversation, use <code>FORCE_COLOR=1 codex resume</code>.
+    This uses Codex's basic colors, so some richer colors are lost. It does
+    not change a Codex process that is already running.</dd>
+    <dd>For a shorter command, add this alias to <code>~/.zshrc</code> if your
+    host uses zsh, or <code>~/.bashrc</code> if it uses bash:
+      <pre><code>alias codex-phone='FORCE_COLOR=1 codex'</code></pre>
+    Open a new shell, then run <code>codex-phone</code> or
+    <code>codex-phone resume</code>. The alias only affects commands you start
+    with that name. Avoid exporting <code>FORCE_COLOR</code> for the entire
+    shell or tmux server; that changes color behavior in other programs too.</dd>
 
     <dt>Notifications stopped</dt>
     <dd>Check Settings → Agents still shows the host as installed and send a
