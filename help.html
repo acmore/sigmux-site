@@ -382,7 +382,9 @@
     <dd>For a shorter command, add this alias to <code>~/.zshrc</code> if your
     host uses zsh, or <code>~/.bashrc</code> if it uses bash:
       <pre><code>alias codex-phone='FORCE_COLOR=1 codex'</code></pre>
-    Open a new shell, then run <code>codex-phone</code> or
+    If a bash login shell does not load <code>~/.bashrc</code>, put the alias
+    in <code>~/.bash_profile</code> instead. Open a new shell, then run
+    <code>codex-phone</code> or
     <code>codex-phone resume</code>. The alias only affects commands you start
     with that name. Avoid exporting <code>FORCE_COLOR</code> for the entire
     shell or tmux server; that changes color behavior in other programs too.</dd>
