@@ -256,6 +256,14 @@
       <pre><code>set -as terminal-features ',xterm-256color:sync'</code></pre></li>
     <li>If your prompt shows up twice in the scrollback after a resize, add:
       <pre><code>set -g scroll-on-clear off</code></pre></li>
+    <li>Let sshd notice a phone that vanished. Without keepalives, a dropped
+    network or a crash leaves the old SSH session and its tmux client on the
+    server for hours, and the client's last size can keep a window small.
+    Sigmux removes its own leftover client on the next connect; this makes
+    the server clean up by itself in about 90 seconds (macOS has no such
+    setting by default). In <code>/etc/ssh/sshd_config</code>:
+      <pre><code>ClientAliveInterval 30
+ClientAliveCountMax 3</code></pre></li>
   </ul>
   <h3>Busy windows and slow links</h3>
   <p>When a window produces output faster than the link can carry it, tmux
@@ -391,6 +399,16 @@
     process and any children that inherit its environment. Avoid exporting
     <code>FORCE_COLOR</code> for the entire shell or tmux server; that changes
     color behavior in other programs too.</dd>
+
+    <dt>After a reconnect the window stays small, with a blank band below</dt>
+    <dd>A tmux client from the previous connection is still attached and
+    reporting a smaller size; with <code>window-size latest</code> the
+    smaller client wins. Sigmux removes the client it left behind when it
+    connects again. If the band persists, another client is holding the
+    size: <code>tmux list-clients -F '#{client_name} #{client_width}x#{client_height}
+    #{client_pid}'</code> shows them, and <code>tmux detach-client -t
+    &lt;name&gt;</code> removes one. The sshd keepalive above stops it
+    recurring.</dd>
 
     <dt>Notifications stopped</dt>
     <dd>Check Settings → Agents still shows the host as installed and send a
