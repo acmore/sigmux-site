@@ -117,6 +117,7 @@
     <li><a href="#tmux">tmux</a></li>
     <li><a href="#keyboard">Keyboard and input</a></li>
     <li><a href="#agents">Agents and notifications</a></li>
+    <li><a href="#agent-skill">Agent skill</a></li>
     <li><a href="#trial">Trial and purchase</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -318,6 +319,20 @@
   with the same Allow and Deny, and the conversation can be read as native
   text instead of terminal scroll. A file the agent mentions opens in a
   reader; the git changes it made open as a diff.</p>
+
+  <h2 id="agent-skill">Agent skill</h2>
+  <p>The optional <a href="https://github.com/acmore/sigmux-site/tree/main/skills/sigmux">Sigmux
+  skill</a> helps a coding agent leave readable phone updates, ask clear
+  questions, handle uploaded paths, and preserve the tmux session that Reader
+  uses. It works with Claude Code, Codex and OpenCode. Install it on the host
+  where those agents run:</p>
+  <pre><code>npx skills add acmore/sigmux-site --skill sigmux -g -a claude-code -a codex -a opencode -y</code></pre>
+  <p>This installs the skill for those agents across your projects. Omit
+  <code>-g</code> to install it only in the current project. The installer
+  needs Node.js and npm; the skill itself is text and adds no background
+  service. It does not install notification hooks, change tmux settings or
+  grant permission to approve tools. Configure and test notifications
+  separately in <strong>Settings → Agents</strong> in Sigmux.</p>
 
   <h2 id="trial">Trial and purchase</h2>
   <ul>
