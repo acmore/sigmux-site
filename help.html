@@ -370,9 +370,9 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
     and <strong>Agent status</strong> for pane status. Codex asks you to
     review new hooks; inspect and approve them in Codex before testing.</li>
     <li>Send a test push, then complete a real Codex turn. The test proves
-    delivery, while the turn checks the configured Codex path. Codex mobile
-    approval is a separate feature under validation; use the terminal for
-    Codex permission requests meanwhile.</li>
+    delivery, while the turn checks the configured Codex path. Use the
+    terminal for permission requests unless this app version and host setup
+    explicitly offer verified Codex phone approval.</li>
   </ol>
 
   <h3>OpenCode</h3>
@@ -390,6 +390,12 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
   agent. See each host's <strong>Configuration location</strong> in Setup
   when the agent runs under a custom home directory or a different SSH
   account.</p>
+  <p>For details on the underlying settings, see the official
+  <a href="https://github.com/tmux/tmux/wiki/Getting-Started">tmux guide</a>,
+  <a href="https://code.claude.com/docs/en/hooks">Claude Code hooks</a>,
+  <a href="https://developers.openai.com/codex/config-reference">Codex configuration</a>
+  and <a href="https://docs.opencode.ai/docs/plugins/">OpenCode plugins</a>.
+  Sigmux's host installer shows the files it will actually change.</p>
 
   <h2 id="agent-skill">Agent skill</h2>
   <p>The optional <a href="https://github.com/acmore/sigmux-site/tree/main/skills/sigmux">Sigmux
