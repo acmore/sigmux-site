@@ -410,6 +410,14 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
   service. It does not install notification hooks, change tmux settings or
   grant permission to approve tools. Configure and test notifications
   separately in <strong>Settings → Agents</strong> in Sigmux.</p>
+  <p>After installing notifications on the host, an agent or shell script can
+  send a useful progress update with the Sigmux 1.1 helper:</p>
+  <pre><code>~/.local/bin/sigmux-notify --message 'Tests passed; ready for review.'
+printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
+  <p>The command reports send failures and sends an ordinary notification.
+  It cannot request or approve a tool action. The host's <strong>Include
+  message</strong> setting controls whether the text is shown on the phone.
+  Send updates at meaningful milestones rather than every turn.</p>
 
   <h2 id="trial">Trial and purchase</h2>
   <ul>
