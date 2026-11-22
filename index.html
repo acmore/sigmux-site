@@ -3,42 +3,262 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sigmux — SSH terminal for iOS</title>
+<title>Sigmux: SSH terminal for tmux and coding agents on iPhone and iPad</title>
+<meta name="description" content="An SSH terminal for people who live in tmux. Windows and panes become native controls, and Claude Code, Codex and OpenCode reach your phone when they need an answer.">
+<link rel="canonical" href="https://sigmux.acmore.dev/">
+<meta name="apple-itunes-app" content="app-id=6769982547">
+<meta name="theme-color" content="#0F0F12">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sigmux.acmore.dev/">
+<meta property="og:title" content="Sigmux: SSH terminal for tmux and coding agents">
+<meta property="og:description" content="Windows and panes become native controls. Claude Code, Codex and OpenCode reach your phone when they need an answer.">
+<meta property="og:image" content="https://sigmux.acmore.dev/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="assets/icon-64.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="preload" href="fonts/Geist.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  @font-face {
+    font-family: "Geist";
+    src: url("fonts/Geist.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Geist Mono";
+    src: url("fonts/GeistMono.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
   :root {
     --bg: #0F0F12;
+    --surface: #1A1A1F;
     --border: #2A2A31;
     --text: #ECECF1;
     --muted: #8E8E96;
     --accent: #FFD23F;
+    --sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --bar: 36px;
   }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 32px; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
+    font: 17px/1.55 var(--sans);
+    padding-bottom: var(--bar);
+    -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 480px; padding: 24px; text-align: center; }
-  h1 {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 32px;
-    margin: 0 0 8px;
-  }
-  h1 .cursor { color: var(--accent); }
-  p { color: var(--muted); font-size: 15px; margin: 0 0 32px; }
-  a { color: var(--accent); text-decoration: none; font-size: 14px; }
+  a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  img { display: block; max-width: 100%; height: auto; }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  .name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 0 0;
+    font: 500 15px var(--mono);
+  }
+  .name img { width: 28px; height: 28px; border-radius: 7px; }
+
+  .window {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 72px;
+    align-items: center;
+    padding: 96px 0;
+    border-top: 1px solid var(--border);
+  }
+  .window.first { border-top: 0; padding-top: 64px; }
+  .window.flip { grid-template-columns: 300px minmax(0, 1fr); }
+  .window.flip .shot { order: -1; }
+  .window.text-only { display: block; }
+
+  h1 {
+    margin: 0 0 24px;
+    font-size: clamp(40px, 6.2vw, 68px);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  h2 {
+    margin: 0 0 20px;
+    font-size: clamp(28px, 3.4vw, 38px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  .lede { max-width: 34em; margin: 0 0 32px; font-size: 19px; color: var(--muted); }
+  .lede strong { color: var(--text); font-weight: 500; }
+
+  .get { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
+  .get .badge img { height: 52px; width: auto; }
+  .get p { margin: 0; max-width: 22em; font-size: 14px; line-height: 1.45; color: var(--muted); }
+
+  .points { margin: 0; padding: 0; list-style: none; max-width: 36em; }
+  .points li { padding: 14px 0; border-top: 1px solid var(--border); color: var(--muted); font-size: 16px; }
+  .points li:first-child { border-top: 0; padding-top: 0; }
+  .points strong { display: block; color: var(--text); font-weight: 500; }
+  code { font: 0.9em var(--mono); color: var(--text); }
+
+  .shot img {
+    width: 300px;
+    border-radius: 34px;
+    border: 1px solid var(--border);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  }
+
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 40px 0 0; }
+  .facts div { border-top: 2px solid var(--accent); padding-top: 14px; }
+  .facts dt { font-weight: 500; }
+  .facts dd { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+
+  .needs { margin: 40px 0 0; max-width: 44em; font-size: 14px; color: var(--muted); }
+
+  footer { padding: 40px 0 56px; border-top: 1px solid var(--border); font-size: 14px; color: var(--muted); }
+  footer a { margin-right: 20px; }
+
+  /* The page's own tmux status line: one window per section. */
+  .status {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: var(--bar);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    font: 13px var(--mono);
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .status::-webkit-scrollbar { display: none; }
+  .status .session { color: var(--accent); }
+  .status a { color: var(--muted); }
+  .status a[aria-current] { color: var(--text); }
+  .status a[aria-current]::after { content: "*"; color: var(--accent); }
+  .status .right { margin-left: auto; color: var(--accent); }
+
+  @media (max-width: 820px) {
+    .page { padding: 0 20px; }
+    .window, .window.flip { grid-template-columns: 1fr; gap: 48px; padding: 64px 0; }
+    .window.first { padding-top: 40px; }
+    .window.flip .shot { order: 0; }
+    .shot img { width: min(280px, 78vw); margin: 0 auto; }
+    .facts { grid-template-columns: 1fr; gap: 28px; }
+    .status { gap: 9px; font-size: 11.5px; padding: 0 10px; }
+    .status .right { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
-<main>
-  <h1>sigmux<span class="cursor">▌</span></h1>
-  <p>A calm, fast SSH terminal for tmux on the go.<br>Currently in private beta.</p>
-  <a href="help.html">Help</a><span style="color: var(--muted); margin: 0 10px">·</span><a href="privacy.html">Privacy Policy</a>
-</main>
+<div class="page">
+  <header class="name">
+    <img src="assets/icon-64.png" alt="" width="28" height="28">
+    <span>sigmux</span>
+  </header>
+
+  <main>
+    <section class="window first" id="terminal">
+      <div>
+        <h1>An SSH terminal for people who live in tmux.</h1>
+        <p class="lede">On iPhone and iPad. Your tmux windows and panes become native controls, and <strong>Claude Code, Codex and OpenCode reach your phone when they need an answer.</strong></p>
+        <div class="get">
+          <a class="badge" href="https://apps.apple.com/app/sigmux/id6769982547"><img src="assets/app-store-badge.svg" alt="Download on the App Store" width="156" height="52"></a>
+          <p>Free to try for 14 days. Then one purchase, with Family Sharing. No subscription.</p>
+        </div>
+      </div>
+      <div class="shot"><img src="assets/terminal.webp" alt="Claude Code running in a tmux window in Sigmux, with a row of Ctrl, Shift, Esc and arrow keys above the home indicator" width="718" height="1560"></div>
+    </section>
+
+    <section class="window flip" id="tmux">
+      <div>
+        <h2>tmux without the prefix key.</h2>
+        <ul class="points">
+          <li><strong>Windows and panes you can tap</strong>Sigmux speaks tmux control mode, so switching, splitting, renaming and killing are a palette, not a chord on a glass keyboard.</li>
+          <li><strong>Keys a shell needs</strong>Ctrl, Alt, Esc, Tab and arrows in a row you can hold or lock.</li>
+          <li><strong>Selection that behaves like iOS</strong>Handles and a magnifier. Links and file paths open with a tap.</li>
+          <li><strong>Everything else still works</strong>Classic <code>tmux attach</code> and plain shells, with keys or passwords. Keys stay in the iOS Keychain, behind Face ID if you choose.</li>
+        </ul>
+      </div>
+      <div class="shot"><img src="assets/palette.webp" alt="The tmux palette in Sigmux: the session's windows, then Split horizontal, Split vertical, Kill pane and New window" width="718" height="1560" loading="lazy"></div>
+    </section>
+
+    <section class="window" id="agents">
+      <div>
+        <h2>Your agents ask. You answer from wherever you are.</h2>
+        <ul class="points">
+          <li><strong>A notification when an agent stops</strong>Claude Code, Codex and OpenCode tell your phone when they finish or need you.</li>
+          <li><strong>Approve or deny on the notification</strong>No need to open the app. In a session, a card above the keys answers the agent waiting in that pane.</li>
+          <li><strong>Read the conversation as text</strong>Reader shows what the agent said without the terminal's wrapping, with copy and quote.</li>
+          <li><strong>Write to it like a person</strong>Compose gives you autocorrect and dictation, takes photos and files, then sends the lot to the agent.</li>
+        </ul>
+      </div>
+      <div class="shot"><img src="assets/compose.webp" alt="Compose in Sigmux: a paragraph of instructions typed with the iOS keyboard, addressed to the Claude Code pane" width="718" height="1560" loading="lazy"></div>
+    </section>
+
+    <section class="window text-only" id="files">
+      <h2>Look at what changed before you say yes.</h2>
+      <p class="lede">Read remote files, Markdown, HTML and images without leaving the session. Review git changes and quote a hunk back to the agent. Share text and files from other apps straight into Compose.</p>
+    </section>
+
+    <section class="window text-only" id="privacy">
+      <h2>Your servers, your traffic.</h2>
+      <dl class="facts">
+        <div><dt>No account</dt><dd>Nothing to sign up for. Your traffic goes from your phone to your servers over SSH.</dd></div>
+        <div><dt>No analytics</dt><dd>The app does not report what you do, and this page loads nothing from anyone else.</dd></div>
+        <div><dt>Sealed notifications</dt><dd>Your host encrypts each notification for your phone. The relay in between passes it on and cannot read it.</dd></div>
+      </dl>
+      <p class="needs">Control mode needs tmux 3.3 or newer on the host. Agent notifications need python3 there; Sigmux's own push notifications need OpenSSL 1.1.1 or newer. The app's interface is in English.</p>
+    </section>
+  </main>
+
+  <footer>
+    <a href="https://apps.apple.com/app/sigmux/id6769982547">App Store</a><a href="help.html">Help</a><a href="privacy.html">Privacy policy</a><a href="mailto:sigmux@acmore.dev">sigmux@acmore.dev</a>
+  </footer>
+</div>
+
+<nav class="status" aria-label="Sections">
+  <span class="session">[sigmux]</span>
+  <a href="#terminal">0:terminal</a>
+  <a href="#tmux">1:tmux</a>
+  <a href="#agents">2:agents</a>
+  <a href="#files">3:files</a>
+  <a href="#privacy">4:privacy</a>
+  <a class="right" href="https://apps.apple.com/app/sigmux/id6769982547">App Store</a>
+</nav>
+
+<script>
+  // Mark the section on screen as the current window, the way tmux does.
+  (function () {
+    var links = {};
+    document.querySelectorAll(".status a[href^='#']").forEach(function (a) { links[a.hash.slice(1)] = a; });
+    function mark(id) {
+      Object.keys(links).forEach(function (key) {
+        if (key === id) links[key].setAttribute("aria-current", "true");
+        else links[key].removeAttribute("aria-current");
+      });
+    }
+    mark("terminal");
+    if (!("IntersectionObserver" in window)) return;
+    var seen = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) mark(entry.target.id); });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    document.querySelectorAll("main section[id]").forEach(function (section) { seen.observe(section); });
+  })();
+</script>
 </body>
 </html>
