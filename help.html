@@ -136,7 +136,7 @@
 
   <main>
   <h1>Help</h1>
-  <div class="date">For Sigmux 1.0 · updated October 23, 2026</div>
+  <div class="date">For Sigmux 1.0 · updated November 23, 2026</div>
 
   <div class="summary">
     Sigmux is an SSH terminal for iPhone and iPad built around tmux. It
@@ -398,14 +398,15 @@
     <li>Under <strong>On your hosts</strong>, install on each host. Sigmux
     signs in with that host's credential and writes the agent hooks; nothing
     runs in the background on the host, the agents call the hook when they
-    need you. <strong>Remove from host</strong> undoes it, with or without a
+    need you. <strong>Remove from</strong> and the host's name undoes it, with or without a
     purchase.</li>
     <li><strong>Send a test notification</strong> checks the path end to
     end. "Break through Focus" marks a waiting approval as time-sensitive;
     "Include the message" puts the agent's words in the notification.</li>
   </ol>
   <p>Inside a session, a waiting approval shows as a card above the key row
-  with the same Allow and Deny, and the conversation can be read as native
+  with <strong>Yes</strong> and <strong>No…</strong>, plus an
+  <strong>Always</strong> choice when the agent offers one, and the conversation can be read as native
   text instead of terminal scroll. A file the agent mentions opens in a
   reader; the git changes it made open as a diff.</p>
   </div>
@@ -450,7 +451,7 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
     in the host's Notifications tab. Sigmux installs hooks in
     <code>~/.claude/settings.json</code> and its own helper files.</li>
     <li>Restart Claude Code in its tmux pane. Complete a short turn, then
-    check the pane in <strong>Agents</strong> and open <strong>Reader</strong>
+    check the window's status in the palette and open <strong>Reader</strong>
     to verify the exact conversation. A test push checks delivery only; it
     does not prove the Claude hooks fired.</li>
     <li>For approval or question cards in an open session, enable
@@ -484,8 +485,7 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
     in Notifications. Sigmux installs its plugin at
     <code>~/.config/opencode/plugins/sigmux-notify.js</code>.</li>
     <li>Run OpenCode directly in tmux and restart it after installation so
-    it loads the plugin. Complete a turn and check the notification, Agents
-    list and Reader. For approval or question cards, also enable Quick
+    it loads the plugin. Complete a turn and check the notification, the window's status in the palette and Reader. For approval or question cards, also enable Quick
     replies in Settings → Agents.</li>
   </ol>
     </div>
@@ -518,7 +518,8 @@ set -as terminal-features ',xterm-256color:sync'</code></pre>
   grant permission to approve tools. Configure and test notifications
   separately in <strong>Settings → Agents</strong> in Sigmux.</p>
   <p>After installing notifications on the host, an agent or shell script can
-  send a useful progress update with the Sigmux 1.1 helper:</p>
+  send a useful progress update. This needs the helper that Sigmux 1.1
+  installs; Sigmux 1.0 does not have it:</p>
   <pre><code>~/.local/bin/sigmux-notify --message 'Tests passed; ready for review.'
 printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
   <p>The command reports send failures and sends an ordinary notification.
@@ -542,7 +543,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     session that is already open keeps working until you close it. Your
     hosts, keys, settings and drafts stay, and you can still remove hooks
     from your servers.</li>
-    <li><strong>Restore Purchases</strong> (Settings → Sigmux) brings back a
+    <li><strong>Restore Purchases</strong> (Settings → Trial &amp; purchase) brings back a
     purchase or the original trial on a new phone; restoring an expired trial
     does not restart it.</li>
   </ul>
@@ -550,7 +551,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
 
   <section id="troubleshooting">
   <h2>Troubleshooting</h2>
-  <details>
+  <details id="slow">
     <summary>Connecting takes several seconds, or output lags</summary>
     <div class="inside">
       <p>On a mesh VPN (Tailscale and the like) a phone on cellular often
@@ -560,7 +561,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     tell and what fixes it.</p>
     </div>
   </details>
-  <details>
+  <details id="handshake-timeout">
     <summary>"tmux handshake timed out"</summary>
     <div class="inside">
       <p>Sigmux attached but tmux did not answer in control mode within a few
@@ -571,7 +572,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     wins.</p>
     </div>
   </details>
-  <details>
+  <details id="keyboard-missing">
     <summary>The keyboard will not appear, or appears over a sheet</summary>
     <div class="inside">
       <p>Tap the terminal itself; scrolling and the key row's action keys
@@ -579,7 +580,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     sheet and drag down on the terminal.</p>
     </div>
   </details>
-  <details>
+  <details id="duplicate-prompt">
     <summary>Duplicated prompt lines in the scrollback</summary>
     <div class="inside">
       <p>Some shells repaint the prompt on every resize and tmux pushes the
@@ -587,7 +588,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     <code>~/.tmux.conf</code> stops it.</p>
     </div>
   </details>
-  <details>
+  <details id="stale-window">
     <summary>A window shows an old screen after switching</summary>
     <div class="inside">
       <p>Switching captures the window from tmux; if it looks stale, switch
@@ -620,7 +621,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     color behavior in other programs too.</div>
     </div>
   </details>
-  <details>
+  <details id="notifications-stopped">
     <summary>Notifications stopped</summary>
     <div class="inside">
       <p>Check Settings → Agents still shows the host as installed and send a
@@ -628,7 +629,7 @@ printf '%s' 'Tests passed' | ~/.local/bin/sigmux-notify --message -</code></pre>
     purchase; removing hooks still works.</p>
     </div>
   </details>
-  <details>
+  <details id="trace">
     <summary>Recording a trace for a bug report</summary>
     <div class="inside">
       <p>Settings → About → <strong>Runtime trace</strong> (session and tmux
