@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Help and troubleshooting
+    url: https://sigmux.acmore.dev/help.html
+    about: Setup, tmux, Tailscale, agents, and what to do when something is off.
+  - name: A question, or an idea to talk over
+    url: https://github.com/acmore/sigmux-site/discussions
+    about: Ask how something works, or float an idea before it becomes a request.
+  - name: Anything private
+    url: mailto:sigmux@acmore.dev
+    about: Reports with host names, addresses or trace files, and purchase questions.

@@ -1,0 +1,20 @@
+name: Feature request
+description: Something Sigmux should do, or do differently
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you are trying to do
+      description: The situation, not the solution. What were you doing on the phone when you wished for this?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help
+      description: How you picture it working, if you have something in mind.
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today instead
