@@ -147,7 +147,8 @@
   .status a { color: var(--muted); }
   .status a[aria-current] { color: var(--text); }
   .status a[aria-current]::after { content: "*"; color: var(--accent); }
-  .status .right { margin-left: auto; color: var(--accent); }
+  .status .right { margin-left: auto; display: flex; gap: 18px; padding-left: 18px; }
+  .status .right a:last-child { color: var(--accent); }
 
   @media (max-width: 820px) {
     .page { padding: 0 20px; }
@@ -222,7 +223,7 @@
         <div><dt>No analytics</dt><dd>The app does not report what you do, and this page loads nothing from anyone else.</dd></div>
         <div><dt>Sealed notifications</dt><dd>Your host encrypts each notification for your phone. The relay in between passes it on and cannot read it.</dd></div>
       </dl>
-      <p class="needs">Control mode needs tmux 3.3 or newer on the host. Agent notifications need python3 there; Sigmux's own push notifications need OpenSSL 1.1.1 or newer. The app's interface is in English.</p>
+      <p class="needs">Control mode needs tmux 3.2 or newer on the host; from 3.3 each window keeps its own size. Agent notifications need python3 there; Sigmux's own push notifications need OpenSSL 1.1.1 or newer. The app's interface is in English.</p>
     </section>
   </main>
 
@@ -238,7 +239,7 @@
   <a href="#agents">2:agents</a>
   <a href="#files">3:files</a>
   <a href="#privacy">4:privacy</a>
-  <a class="right" href="https://apps.apple.com/app/sigmux/id6769982547">App Store</a>
+  <span class="right"><a href="help.html">help</a><a href="privacy.html">privacy</a><a href="https://apps.apple.com/app/sigmux/id6769982547">App Store</a></span>
 </nav>
 
 <script>
