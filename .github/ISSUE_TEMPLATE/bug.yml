@@ -1,0 +1,80 @@
+name: Bug report
+description: Something in Sigmux does not work the way it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues here are public. Leave out host names, addresses, user names and keys.
+        If the report needs them, or a trace file, send it to sigmux@acmore.dev instead.
+
+        The [troubleshooting list](https://sigmux.acmore.dev/help.html#troubleshooting) covers slow connections, the tmux handshake timeout and a few others.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead. A screenshot or recording helps.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to see it again
+      placeholder: |
+        1. Connect to a host in control mode
+        2. …
+  - type: input
+    id: app
+    attributes:
+      label: Sigmux version
+      description: Settings › About, for example 1.0.0 (424)
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and iOS version
+      placeholder: iPhone 16 Pro, iOS 26.3
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: How the host is connected
+      options:
+        - tmux, control mode
+        - tmux, classic attach
+        - Plain shell
+        - Not about a connection
+    validations:
+      required: true
+  - type: input
+    id: tmux
+    attributes:
+      label: tmux version on the host
+      description: The output of `tmux -V`, if tmux is involved
+  - type: dropdown
+    id: network
+    attributes:
+      label: Network when it happened
+      options:
+        - Wi-Fi, same network as the host
+        - Wi-Fi, over the internet or a VPN
+        - Cellular
+        - Tailscale or another mesh VPN
+        - Not sure
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Agent involved
+      multiple: true
+      options:
+        - Claude Code
+        - Codex
+        - OpenCode
+        - None
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Whether it happens every time, when it started, what you already tried.
