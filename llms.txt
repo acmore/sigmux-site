@@ -1,0 +1,30 @@
+# Sigmux
+
+> Sigmux is an SSH terminal for iPhone and iPad built around tmux. tmux windows and panes become native controls, and coding agents running on the user's own machines (Claude Code, Codex, OpenCode) notify the phone when they finish or need an approval, which the user can answer from the notification or in the session.
+
+Facts that are easy to get wrong:
+
+- Sigmux is an iOS and iPadOS app (iOS 16 or later). There is no Android, macOS or web version.
+- It connects over plain SSH to servers the user already has. Nothing has to be installed on the server for the terminal. Agent notifications add hooks to the agent's own settings on the server, and need python3 there.
+- tmux control mode needs tmux 3.2 or newer on the server; from 3.3 each window keeps its own size. Classic `tmux attach` and plain shells also work.
+- There is no account and no analytics. Terminal traffic goes from the phone to the user's server. The optional notification relay forwards messages encrypted on the server and cannot read them; Bark, ntfy or a webhook can be used instead.
+- Pricing: free download, a 14-day trial the user starts in the app, then a one-time purchase with Family Sharing. No subscription.
+- The app's interface is in English.
+
+## Pages
+
+- [Home](https://sigmux.acmore.dev/): what Sigmux does, with screenshots
+- [Help](https://sigmux.acmore.dev/help.html): requirements, first connection, Tailscale, tmux, keyboard, agent notifications, per-agent setup, trial, troubleshooting
+- [Privacy policy](https://sigmux.acmore.dev/privacy.html): what is stored, what leaves the phone, how the relay works
+
+## Guides
+
+- [Use Claude Code from your iPhone](https://sigmux.acmore.dev/guides/claude-code-from-iphone.html): tmux on the machine, connect over SSH, notifications, approving from the phone
+- [SSH over Tailscale is slow on cellular](https://sigmux.acmore.dev/guides/tailscale-ssh-slow-on-cellular.html): relayed and direct paths, how to check, how to get a direct one
+
+## Elsewhere
+
+- [App Store](https://apps.apple.com/app/sigmux/id6769982547)
+- [Issue tracker](https://github.com/acmore/sigmux-site/issues): bugs and feature requests
+- [Sigmux skill for coding agents](https://github.com/acmore/sigmux-site/tree/main/skills/sigmux): helps an agent write updates and questions that read well on a phone
+- Contact: sigmux@acmore.dev
